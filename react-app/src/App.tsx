@@ -1,11 +1,18 @@
 import './App.css'
+import FileInputComponent from './file';
 
 function App() {
-  const hello: string = "Hello World!";
+  const heading: string = "Welcome to Image Compression App!";
+  const subheading: string = "Upload a png file to get started!";
+  
   return (
-    <header>
-      <h1>{hello}</h1>
-    </header>
+    <div>
+      <h1>{heading}</h1>
+      <h3>{subheading}</h3>
+      <div>
+        <FileInputComponent/>
+      </div>
+    </div>
   );
 }
 
