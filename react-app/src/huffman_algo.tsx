@@ -18,7 +18,6 @@ class HuffmanNode {
 // Function to calculate frequency of each pixel value
 const calculateFrequency = (pixels: number[][]): FrequencyMap => {
     const frequencyMap: FrequencyMap = {};
-
     pixels.forEach(row => {
         row.forEach(pixel => {
             if (frequencyMap[pixel]) {
@@ -28,6 +27,8 @@ const calculateFrequency = (pixels: number[][]): FrequencyMap => {
             }
         });
     });
+
+    console.log(frequencyMap)
 
     return frequencyMap;
 };
@@ -124,7 +125,7 @@ const getImageData = (imageSrc: string): Promise<number[][]> => {
                 }
                 pixelData.push(row);
             }
-
+            console.log(pixelData.length)
             resolve(pixelData);
         };
 
@@ -139,7 +140,7 @@ const compressImageData = (pixelData: number[][]): Promise<string> => {
     return new Promise((resolve, reject) => {
         // Calculate frequency of each pixel value
         const frequencyMap = calculateFrequency(pixelData);
-
+        console.log(frequencyMap)
         // Build Huffman Tree
         const huffmanTree = buildHuffmanTree(frequencyMap);
         if (!huffmanTree) {
@@ -166,3 +167,33 @@ const getImageDataAndCompress = (imageSrc: string): Promise<string | null> => {
         });
 };
 export {getImageDataAndCompress}
+
+const createImageFromPixelData = (pixelData: number[][], width: number, height: number): HTMLImageElement => {
+    // Create a canvas element
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    // Get the canvas context
+    const context = canvas.getContext('2d');
+    if (!context) {
+        throw new Error('Failed to get canvas context');
+    }
+
+    // Iterate through pixel data and draw pixels
+    pixelData.forEach((row, y) => {
+        row.forEach((pixel, x) => {
+            // Draw the pixel at position (x, y) with color 'pixel'
+            context.fillStyle = `rgb(${pixel},${pixel},${pixel})`; // Grayscale color
+            context.fillRect(x, y, 1, 1); // Draw a single pixel
+        });
+    });
+
+    // Convert canvas to image
+    const image = new Image();
+    image.src = canvas.toDataURL('image/png'); // Convert canvas to data URL
+
+    return image;
+};
+
+export {createImageFromPixelData}
