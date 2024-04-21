@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useState } from 'react';
 import { getImageDataAndCompress } from './huffman_algo';
-import { calculateFrequency } from './huffman_algo';
 import { getImageData } from './huffman_algo';
 import { createImageFromPixelData } from './huffman_algo';
+import { saveAs } from 'file-saver';
 
 const FileInputComponent: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -33,7 +33,7 @@ const FileInputComponent: React.FC = () => {
                         getImageDataAndCompress(e.target.result)
                         .then((data) => {
                             //console.log('Compressed data:', data)
-
+                            console.log(data)
                             setCompressedData(data)
                         })
                         // Compress the image data
@@ -44,6 +44,23 @@ const FileInputComponent: React.FC = () => {
                 }
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const saveCompressedData = async () => {
+        if (compressedData) {
+          try {
+            const blob = new Blob([compressedData], { type: 'application/octet-stream' });
+            const fileName = 'compressed_image.bin';
+    
+            // Use file-saver library to save the blob
+            saveAs(blob, fileName);
+            console.log('Compressed data saved successfully!');
+          } catch (error) {
+            console.error('Error saving compressed data:', error);
+          }
+        } else {
+          console.warn('No compressed data available to save.');
         }
     };
 
@@ -62,19 +79,11 @@ const FileInputComponent: React.FC = () => {
                             <img src={imageSrc} alt="Uploaded File" style={{ maxWidth: '100%', maxHeight: '100%' }} />
                         </div>
                     )}
-                   {compressedData && (
-                        <div>
-                            <h2>After Compression:</h2>
-                            <p>Compressed Data: {compressedData}</p>
-                            {/* Display the compressed image */}
-                            {displayedImageSrc && (
-                                <div>
-                                    <h2>Compressed Image:</h2>
-                                    <img src={displayedImageSrc} alt="Compressed Image" style={{ maxWidth: '100%', maxHeight: '100%' }} />
-                                </div>
-                            )}
-                        </div>
-                    )}
+                    <div>
+                        <button onClick={saveCompressedData} disabled={!compressedData}>
+                            Save Compressed Data
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
@@ -82,3 +91,5 @@ const FileInputComponent: React.FC = () => {
 };
 
 export default FileInputComponent;
+
+

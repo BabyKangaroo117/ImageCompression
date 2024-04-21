@@ -73,7 +73,7 @@ const generateHuffmanCodes = (root: HuffmanNode, code: string = '', codes: { [ke
             generateHuffmanCodes(root.right, code + '1', codes);
         }
     }
-    //console.log("Codes: ", codes)
+    console.log("Codes: ", codes)
     return codes;
 };
 
@@ -125,7 +125,7 @@ const getImageData = (imageSrc: string): Promise<number[][]> => {
                 }
                 pixelData.push(row);
             }
-            console.log(pixelData.length)
+            console.log(pixelData[0])
             resolve(pixelData);
         };
 
@@ -167,6 +167,9 @@ const getImageDataAndCompress = (imageSrc: string): Promise<string | null> => {
         });
 };
 export {getImageDataAndCompress}
+
+
+
 
 const createImageFromPixelData = (pixelData: number[][], width: number, height: number): HTMLImageElement => {
     // Create a canvas element
