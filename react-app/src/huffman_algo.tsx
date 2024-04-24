@@ -77,19 +77,43 @@ const generateHuffmanCodes = (root: HuffmanNode, code: string = '', codes: { [ke
     return codes;
 };
 
-// Function to compress pixel array using Huffman Codes
-const compressPixels = (pixels: number[][], codes: { [key: number]: string }): string => {
-    let compressedData = '';
+// Function to compress pixel array using Huffman Codes with bit-level encoding
+const compressPixels = (pixels: number[][], codes: { [key: number]: string }): Uint8Array => {
+    const compressedData: number[] = [];
+    let currentByte = 0; // Current byte being constructed
+    let bitPosition = 0; // Current position within the byte (0-7)
 
     pixels.forEach(row => {
         row.forEach(pixel => {
-            compressedData += codes[pixel];
+            const code = codes[pixel];
+            for (let i = 0; i < code.length; i++) {
+                // Set the appropriate bit in the current byte
+                if (code[i] === '1') {
+                    currentByte |= (1 << (7 - bitPosition));
+                }
+
+                // Increment the bit position
+                bitPosition++;
+
+                // If the byte is full, push it to the compressed data array
+                if (bitPosition === 8) {
+                    compressedData.push(currentByte);
+                    currentByte = 0;
+                    bitPosition = 0;
+                }
+            }
         });
     });
 
-    //console.log("Pixels: ", compressedData)
-    return compressedData;
+    // If there are remaining bits in the current byte, push it to the compressed data array
+    if (bitPosition > 0) {
+        compressedData.push(currentByte);
+    }
+
+    // Convert the compressed data array to Uint8Array for efficient storage
+    return new Uint8Array(compressedData);
 };
+
 
 const getImageData = (imageSrc: string): Promise<number[][]> => {
     return new Promise((resolve, reject) => {
@@ -115,17 +139,12 @@ const getImageData = (imageSrc: string): Promise<number[][]> => {
                     const g = imageData.data[index + 1];
                     const b = imageData.data[index + 2];
 
-                    // Check if the pixel is grayscale (R = G = B)
-                    if (r === g && g === b) {
-                        row.push(r);
-                    } else {
-                        // If not grayscale, push 0 indicating invalid pixel
-                        row.push(0);
-                    }
+                    // Convert RGB to grayscale
+                    const grayValue = Math.round(0.2989 * r + 0.587 * g + 0.114 * b);
+                    row.push(grayValue);
                 }
                 pixelData.push(row);
             }
-            console.log(pixelData[0])
             resolve(pixelData);
         };
 
@@ -134,43 +153,45 @@ const getImageData = (imageSrc: string): Promise<number[][]> => {
     });
 };
 
-export {getImageData}
+export { getImageData };
 
-const compressImageData = (pixelData: number[][]): Promise<string> => {
+
+const getImageDataAndCompress = (imageSrc: string): Promise<Uint8Array | null> => {
     return new Promise((resolve, reject) => {
-        // Calculate frequency of each pixel value
-        const frequencyMap = calculateFrequency(pixelData);
-        console.log(frequencyMap)
-        // Build Huffman Tree
-        const huffmanTree = buildHuffmanTree(frequencyMap);
-        if (!huffmanTree) {
-            reject(new Error('Failed to build Huffman tree'));
-            return;
-        }
+        getImageData(imageSrc)
+            .then((pixelData) => {
+                // Calculate frequency of each pixel value
+                const frequencyMap = calculateFrequency(pixelData);
+                // Build Huffman Tree
+                const huffmanTree = buildHuffmanTree(frequencyMap);
+                if (!huffmanTree) {
+                    reject(new Error('Failed to build Huffman tree'));
+                    return;
+                }
 
-        // Generate Huffman Codes
-        const huffmanCodes = generateHuffmanCodes(huffmanTree);
+                // Generate Huffman Codes
+                const huffmanCodes = generateHuffmanCodes(huffmanTree);
 
-        // Compress pixel data using Huffman Codes
-        const compressedData = compressPixels(pixelData, huffmanCodes);
+                // Compress pixel data using Huffman Codes
+                const compressedData = compressPixels(pixelData, huffmanCodes);
 
-        resolve(compressedData);
+                // Convert binary string to Uint8Array
+                const bytes = new Uint8Array(compressedData.length);
+                for (let i = 0; i < compressedData.length; i++) {
+                    bytes[i] = compressedData[i];
+                }
+
+                resolve(bytes);
+            })
+            .catch((error) => {
+                console.error('Error getting and compressing image data:', error);
+                reject(error);
+            });
     });
 };
 
-const getImageDataAndCompress = (imageSrc: string): Promise<string | null> => {
-    return getImageData(imageSrc)
-        .then(compressImageData)
-        .catch(error => {
-            console.error('Error getting and compressing image data:', error);
-            return null;
-        });
-};
-export {getImageDataAndCompress}
-
-
-
-
+export { getImageDataAndCompress };    
+    
 const createImageFromPixelData = (pixelData: number[][], width: number, height: number): HTMLImageElement => {
     // Create a canvas element
     const canvas = document.createElement('canvas');
