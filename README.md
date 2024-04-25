@@ -9,14 +9,17 @@ In the context of image compression, Huffman coding can be used to encode pixel 
 1. Click the `Code` button at the top of the repository.
 2. Navigate to the `Codespaces` tab.
 3. Click the `Create codespace on main` button to initiate the Codespace creation process.
-4. Wait for the app to automatically build and run within the Codespace environment.
-5. Once the app is built and running, you can view it in the preview window.
-6. If the app does not automatically launch:
+![codespace](img/codespace.png)
+5. Wait for the app to automatically build and run within the Codespace environment.
+![preview](img/preview.png)
+6. Once the app is built and running, you can view it in the preview window.
+7. If the app does not automatically launch:
     - Open a `bash` terminal by clicking the `+` icon in the terminal pane.
     - Ensure that `node.js` is installed by running the command `npm install` in the terminal.
     - Navigate to the `react-app/` directory using the command `cd react-app/`.
     - Finally, start the app by running `npm run dev` in the terminal.
-7. You can access the app by clicking on the provided link (usually `http://localhost:5174/`) to open it in a new browser tab.
+8. You can access the app by clicking on the provided link (usually `http://localhost:5174/`) to open it in a new browser tab.
+![terminal](img/terminal.png)
 
 ## Using the Image Compression App
 1. Click on *Choose File* button
