@@ -3,11 +3,7 @@
     "cpus": 4
   },
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "npm install",
-  "postCreateCommand": "cd react-app/",
-  "postAttachCommand": {
-    "server": "npm run dev"
-  },
+  "postCreateCommand": "cd react-app/ && npm install && npm run dev",
   "customizations": {
     "codespaces": {
       "openFiles": [
