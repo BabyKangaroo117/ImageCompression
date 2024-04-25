@@ -69,7 +69,7 @@ const FileInputComponent: React.FC = () => {
             {selectedFile && (
                 <div>
                     <p>Selected File: {selectedFile.name}</p>
-                    // selected.size gives the size in bytes so we convert it to KB
+                    {/*selected.size gives the size in bytes so we convert it to KB*/}
                     <p>File Size: {selectedFile.size * 0.001} KB</p>
                     {imageSrc && (
                         <div>
