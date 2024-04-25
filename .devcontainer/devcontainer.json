@@ -1,0 +1,21 @@
+{
+  "hostRequirements": {
+    "cpus": 4
+  },
+  "waitFor": "onCreateCommand",
+  "postCreateCommand": "cd react-app/ && npm install && npm run dev",
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "src/App.js"
+      ]
+    }
+  },
+  "portsAttributes": {
+    "5173": {
+      "label": "Image Compression App",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "forwardPorts": [5173]
+}
